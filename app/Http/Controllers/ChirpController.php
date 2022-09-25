@@ -8,11 +8,6 @@ use Inertia\Inertia;
 
 class ChirpController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         return Inertia::render('Chirps/Index', [
@@ -20,12 +15,6 @@ class ChirpController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -33,6 +22,19 @@ class ChirpController extends Controller
         ]);
 
         $request->user()->chirps()->create($validated);
+
+        return redirect(route('chirps.index'));
+    }
+
+    public function update(Request $request, Chirp $chirp)
+    {
+        $this->authorize('update', $chirp);
+
+        $validated = $request->validate([
+            'message' => 'required|string|max:255',
+        ]);
+
+        $chirp->update($validated);
 
         return redirect(route('chirps.index'));
     }
